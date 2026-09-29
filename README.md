@@ -4,7 +4,7 @@ Interaktywna ekspozycja 3D w przeglądarce. Najpierw krótki film o magii kina, 
 projekcyjnej, w której stoi działający projektor kinowy 35 mm. Można go uruchomić, zajrzeć do środka i zobaczyć, jak powstaje
 ruchomy obraz.
 
-**Zobacz online:** https://apkmasondev.github.io/mechanika-kina/
+**Zobacz online:** https://apkmason.dev/mechanika-kina/
 
 ![Projektor kinowy 35 mm w kabinie projekcyjnej](public/og-image.jpg)
 
