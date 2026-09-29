@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mechanika kina — projektor 35 mm</title>
+  <meta name="description" content="Interaktywna ekspozycja 3D: kinowy projektor 35 mm w kabinie projekcyjnej. Krzyż maltański, migawka, droga taśmy i światła — pokazane w działaniu." />
+  <meta name="theme-color" content="#0a0a09" />
+  <meta name="color-scheme" content="dark" />
+  <!-- Open Graph / social cards (VITE_SITE_URL is set by the GitHub Pages workflow) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pl_PL" />
+  <meta property="og:site_name" content="Mechanika kina" />
+  <meta property="og:title" content="Mechanika kina — projektor 35 mm" />
+  <meta property="og:description" content="Najpierw magia kina, potem maszyna, która ją tworzy. Interaktywna ekspozycja 3D projektora kinowego 35 mm." />
+  <meta property="og:url" content="%VITE_SITE_URL%" />
+  <meta property="og:image" content="%VITE_SITE_URL%og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Projektor kinowy 35 mm w ciemnej kabinie projekcyjnej, wiązka światła biegnie do okna projekcyjnego" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mechanika kina — projektor 35 mm" />
+  <meta name="twitter:description" content="Interaktywna ekspozycja 3D projektora kinowego 35 mm." />
+  <meta name="twitter:image" content="%VITE_SITE_URL%og-image.jpg" />
+  <!-- critical paint: dark from the first frame, no flash of unstyled content -->
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; color: #e9e1cf; overflow: hidden; }
+  </style>
+  <link rel="stylesheet" href="/src/styles.css" />
+  <script>
+    // reveal the ticket once the web fonts are ready (max 1.5 s) - independent of the 3D bundle
+    Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })])
+      .then(function () { document.documentElement.classList.add('fonts'); });
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23111' stroke='%23e9e1cf' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23e9e1cf'/%3E%3Ccircle cx='16' cy='8' r='3' fill='%23e9e1cf'/%3E%3Ccircle cx='16' cy='24' r='3' fill='%23e9e1cf'/%3E%3Ccircle cx='8' cy='16' r='3' fill='%23e9e1cf'/%3E%3Ccircle cx='24' cy='16' r='3' fill='%23e9e1cf'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <canvas id="gl" aria-label="Projektor kinowy 35 mm w kabinie projekcyjnej — widok 3D"></canvas>
+
+  <!-- intro film + title replica -->
+  <video id="intro" src="media/intro.mp4" playsinline preload="auto" poster="media/intro_first.jpg"></video>
+  <!-- replica of the film's title, placed in film-frame coordinates (1920x1080) -->
+  <svg id="title-overlay" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g class="tt-block">
+        <text class="tt-t" x="875" y="537" textLength="859" lengthAdjust="spacingAndGlyphs">MECHANIKA KINA</text>
+        <rect x="874" y="556" width="863" height="7" />
+        <rect x="957" y="570" width="694" height="4" />
+        <text class="tt-s" x="1173" y="657" textLength="218" lengthAdjust="spacingAndGlyphs">35 MM</text>
+      </g>
+  </svg>
+
+  <!-- entrance ticket -->
+  <div id="gate">
+    <div id="ticket" role="button" tabindex="0" aria-label="Wejdź na seans">
+      <div class="tk-stub">
+        <span class="tk-v">KONTROLA</span>
+        <span class="tk-no">Nº 004217</span>
+      </div>
+      <div class="tk-body">
+        <div class="tk-top"><span>KINO · KABINA PROJEKCYJNA</span><span>SEANS 35 mm</span></div>
+        <div class="tk-title">Mechanika kina</div>
+        <div class="tk-rule"></div>
+        <div class="tk-grid">
+          <div><em>Sala</em><b>kabina</b></div>
+          <div><em>Rząd</em><b>—</b></div>
+          <div><em>Miejsce</em><b>przy projektorze</b></div>
+          <div><em>Czas</em><b>10 s + ekspozycja</b></div>
+        </div>
+        <div class="tk-foot">
+          <span class="tk-enter">Wejdź <span class="tk-arrow">→</span></span>
+          <span class="tk-load"><span class="tk-bar"></span><span id="load-msg">wczytywanie kopii</span></span>
+        </div>
+      </div>
+    </div>
+    <p class="gate-note">Ekspozycja z dźwiękiem. Najlepiej na pełnym ekranie.</p>
+  </div>
+  <button id="skip" type="button">Pomiń intro ▸▸</button>
+
+  <!-- exhibit UI -->
+  <header id="placard">
+    <h1 class="pc-h1">Mechanika kina — 35 mm</h1>
+    <svg class="pc-block" viewBox="872 444 868 216" aria-hidden="true">
+      <g class="pc-g">
+        <text class="tt-t" x="875" y="537" textLength="859" lengthAdjust="spacingAndGlyphs">MECHANIKA KINA</text>
+        <rect x="874" y="556" width="863" height="7" />
+        <rect x="957" y="570" width="694" height="4" />
+        <text class="tt-s" x="1173" y="657" textLength="218" lengthAdjust="spacingAndGlyphs">35 MM</text>
+      </g>
+    </svg>
+    <div class="pc-meta">Projektor kinowy · inspirowany Simplex X-L<br />Głowica 1949/1950 · późniejsza lampa ksenonowa</div>
+  </header>
+
+  <nav id="corner" inert aria-label="Ustawienia ekspozycji">
+    <button id="labels" type="button" title="Oznaczenia" aria-pressed="true"><i></i>Oznaczenia</button>
+    <button id="sound" type="button" title="Dźwięk" aria-pressed="true"><i></i>Dźwięk</button>
+    <button id="screen-view" type="button" title="Widok przez okno projekcyjne">Ekran</button>
+    <button id="reset-view" type="button" title="Powrót do ujęcia trybu (R)">Powrót</button>
+  </nav>
+
+  <svg id="callout-lines" aria-hidden="true"></svg>
+  <div id="callouts" inert></div>
+
+  <aside id="card" aria-live="polite">
+    <div class="cd-head"><span id="card-num">I</span><span id="card-title">Praca</span></div>
+    <p id="card-text"></p>
+  </aside>
+
+  <aside id="timing" aria-hidden="true"><div class="tm-head"><span>Cykl przy 24 kl./s: 1/24 s</span><span>krzywka 0–360°</span></div><canvas aria-label="Wykres: migawka zasłania światło podczas przesuwu taśmy, dwa błyski na klatkę"></canvas></aside>
+  <aside id="inset" aria-hidden="true"><div class="in-head">Widok na ekran <span>przez okno projekcyjne</span></div><canvas aria-label="Podgląd klatki wyświetlanej na ekranie"></canvas></aside>
+
+  <footer id="pulpit" inert></footer>
+
+  <div id="hint">Przeciągnij, aby obrócić · kółko myszy — zbliżenie · prawy przycisk — przesuń · klawisze 1–6</div>
+
+  <noscript><p class="fatal-static">Ta ekspozycja wymaga JavaScriptu i przeglądarki z obsługą WebGL 2.</p></noscript>
+  <div id="fatal" role="alert" hidden></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
