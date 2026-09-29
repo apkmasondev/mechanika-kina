@@ -8,7 +8,9 @@ export const SHOTS = {
   light: { pos: [-0.22, 1.5, 1.95], target: [-0.3, 1.27, 0.07], fov: 44 },
   slow: { pos: [-0.16, 1.22, 0.54], target: [-0.045, 1.245, 0.0], fov: 36, rMin: 0.2 },
   inside: { pos: [0.5, 1.42, -1.05], target: [0.03, 1.27, -0.04], fov: 38, rMin: 0.25 },
-  port: { pos: [1.12, 1.28, 0.07], target: [17.5, 1.28, 0.07], fov: 30, rMin: 0.05, rMax: 20 },
+  // the projectionist's observation window (right of the lens port): its frame stays in view,
+  // the screen 16 m away is seen through the glass
+  port: { pos: [0.8, 1.53, 0.69], target: [17.5, 1.28, 0.07], fov: 30, look: true },
   explode: { pos: [1.17, 1.62, 3.05], target: [-0.12, 1.22, 0.22], fov: 58 },
 };
 

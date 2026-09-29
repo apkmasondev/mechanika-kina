@@ -41,7 +41,7 @@ Sześć trybów zwiedzania:
 | 1–6 | tryby |
 | Spacja · L · M | silnik · lampa · migawka (wyłączona migawka pokazuje smużenie obrazu) |
 | Esc / R | powrót do ujęcia trybu |
-| Ekran / Powrót | widok przez okno kabiny na ekran i z powrotem |
+| Ekran / Powrót | przejście do okienka obserwacyjnego kinooperatora i widok na ekran (kółko przybliża), powrót |
 | klik w oznaczenie | kamera podjeżdża do elementu |
 
 Najlepiej na komputerze, na pełnym ekranie i z dźwiękiem. Wymagana przeglądarka z obsługą WebGL 2.
